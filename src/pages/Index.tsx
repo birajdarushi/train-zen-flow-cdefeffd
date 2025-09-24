@@ -4,7 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrainCard } from "@/components/TrainCard";
 import { MetricCard } from "@/components/MetricCard";
-import { SectionMap } from "@/components/SectionMap";
+import { TrackVisualization } from "@/components/TrackVisualization";
+import { AIRecommendationsPanel } from "@/components/AIRecommendationsPanel";
+import { useWebSocket } from "@/hooks/useWebSocket";
+import { railwayApi } from "@/services/railwayApi";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Train, 
   Clock, 
@@ -14,7 +18,9 @@ import {
   Settings,
   Play,
   Pause,
-  RotateCcw
+  RotateCcw,
+  Wifi,
+  WifiOff
 } from "lucide-react";
 
 const mockTrains = [
@@ -54,6 +60,48 @@ const mockTrains = [
 
 const Index = () => {
   const [simulationRunning, setSimulationRunning] = useState(false);
+  const { trains, events, conflicts, connectionStatus, reconnect } = useWebSocket();
+  const { toast } = useToast();
+
+  const handleOptimizationRequest = async () => {
+    try {
+      const trainData = Object.values(trains).map(train => ({
+        train_id: train.train_id,
+        current_section: train.current_section_id,
+        destination: train.destination,
+        priority: train.priority,
+        delay_minutes: Math.floor((train.signal_delay_seconds || 0) / 60),
+        train_type: train.train_type
+      }));
+
+      if (trainData.length === 0) {
+        toast({
+          title: "No Active Trains",
+          description: "Connect to the railway system to see live trains and generate optimizations.",
+          duration: 3000,
+        });
+        return;
+      }
+
+      const optimization = await railwayApi.requestOptimization({
+        trains: trainData,
+        optimization_criteria: ['minimize_delays', 'maximize_throughput']
+      });
+
+      toast({
+        title: "Optimization Generated",
+        description: `Generated ${optimization.candidates.length} optimization candidates.`,
+        duration: 3000,
+      });
+    } catch (error) {
+      toast({
+        title: "Optimization Failed",
+        description: "Unable to generate optimization. Check API connection.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
   
   return (
     <div className="min-h-screen bg-background railway-grid">
@@ -72,13 +120,34 @@ const Index = () => {
             </div>
             
             <div className="flex items-center gap-4">
-              <Badge className="bg-operational/20 text-operational border-operational">
-                SYSTEM ACTIVE
+              <Badge 
+                className={
+                  connectionStatus === 'connected' 
+                    ? "bg-operational/20 text-operational border-operational" 
+                    : "bg-critical/20 text-critical border-critical"
+                }
+              >
+                {connectionStatus === 'connected' ? (
+                  <>
+                    <Wifi className="w-3 h-3 mr-1" />
+                    LIVE DATA
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-3 h-3 mr-1" />
+                    OFFLINE
+                  </>
+                )}
               </Badge>
               <Badge className="bg-primary/20 text-primary border-primary">
                 <Zap className="w-3 h-3 mr-1" />
                 AI ONLINE
               </Badge>
+              {connectionStatus !== 'connected' && (
+                <Button variant="outline" size="sm" onClick={reconnect}>
+                  Reconnect
+                </Button>
+              )}
               <Button variant="outline" size="icon">
                 <Settings className="w-4 h-4" />
               </Button>
@@ -92,7 +161,7 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <MetricCard
             title="Active Trains"
-            value="47"
+            value={Object.keys(trains).length.toString()}
             change={{ value: 12, trend: "up" }}
             icon={Train}
             description="Currently in section"
@@ -113,7 +182,7 @@ const Index = () => {
           />
           <MetricCard
             title="Incidents"
-            value="2"
+            value={(events.length + conflicts.length).toString()}
             change={{ value: 60, trend: "down" }}
             icon={AlertTriangle}
             description="active alerts"
@@ -122,52 +191,17 @@ const Index = () => {
 
         {/* Main Dashboard */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Section Map */}
+          {/* Track Visualization */}
           <div className="lg:col-span-2">
-            <SectionMap />
+            <TrackVisualization trains={trains} connectionStatus={connectionStatus} />
           </div>
           
           {/* AI Recommendations Panel */}
           <div className="space-y-4">
-            <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-bold text-primary flex items-center gap-2">
-                  <Zap className="w-5 h-5" />
-                  AI Recommendations
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="p-3 bg-operational/10 border border-operational/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-operational animate-pulse" />
-                    <span className="text-sm font-semibold text-operational">PRIORITY</span>
-                  </div>
-                  <p className="text-sm text-foreground/90">
-                    Grant precedence to Train 12345 at Junction A. Expected delay reduction: 12 minutes.
-                  </p>
-                </div>
-                
-                <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-warning" />
-                    <span className="text-sm font-semibold text-warning">CAUTION</span>
-                  </div>
-                  <p className="text-sm text-foreground/90">
-                    Platform congestion detected at Station B. Consider alternative routing.
-                  </p>
-                </div>
-                
-                <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    <span className="text-sm font-semibold text-primary">OPTIMIZE</span>
-                  </div>
-                  <p className="text-sm text-foreground/90">
-                    Adjust crossing timing at Signal C to improve overall throughput by 8%.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <AIRecommendationsPanel 
+              trains={trains} 
+              onOptimizationRequest={handleOptimizationRequest}
+            />
             
             {/* Simulation Controls */}
             <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
@@ -212,14 +246,30 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-primary">Active Trains</h2>
             <Badge className="bg-muted/50 text-muted-foreground">
-              {mockTrains.length} trains monitored
+              {Object.keys(trains).length > 0 ? Object.keys(trains).length : mockTrains.length} trains monitored
             </Badge>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {mockTrains.map((train) => (
-              <TrainCard key={train.trainNumber} {...train} />
-            ))}
+            {Object.values(trains).length > 0 ? (
+              Object.values(trains).map((train) => (
+                <TrainCard 
+                  key={train.train_id} 
+                  trainNumber={train.train_id}
+                  trainName={`${train.train_type} Service`}
+                  currentLocation={train.current_section_id}
+                  nextStation={train.destination}
+                  status={train.status.toLowerCase() as any}
+                  delay={Math.floor((train.signal_delay_seconds || 0) / 60)}
+                  priority={train.train_type.toLowerCase() as any}
+                  eta={new Date(train.expected_exit_timestamp).toLocaleTimeString()}
+                />
+              ))
+            ) : (
+              mockTrains.map((train) => (
+                <TrainCard key={train.trainNumber} {...train} />
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ScenarioSimulator from "./pages/scenarioSimulator";
+import AuditSystem from "./pages/AuditSystem";
+
 
 const queryClient = new QueryClient();
 
@@ -23,6 +26,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/scenario-simulator" element={<ScenarioSimulator />} />
+            <Route path="/audit-system" element={<AuditSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

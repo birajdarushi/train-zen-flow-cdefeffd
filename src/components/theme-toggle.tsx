@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
+import { Menu, Train, Shield } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,26 +11,34 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function ThemeToggle() {
-  const { setTheme } = useTheme()
+  const navigate = useNavigate()
+
+  const handleNavigation = (path: string) => {
+    navigate(path)
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+          <Menu className="h-[1.2rem] w-[1.2rem]" />
+          <span className="sr-only">Open navigation menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+        <DropdownMenuItem 
+          onClick={() => handleNavigation("/scenario-simulator")}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <Train className="h-4 w-4" />
+          Scenario Simulation
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+        <DropdownMenuItem 
+          onClick={() => handleNavigation("/audit-system")}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <Shield className="h-4 w-4" />
+          Audit System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

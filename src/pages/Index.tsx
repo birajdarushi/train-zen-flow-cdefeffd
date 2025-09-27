@@ -6,6 +6,8 @@ import { TrainCard } from "@/components/TrainCard";
 import { MetricCard } from "@/components/MetricCard";
 import { TrackVisualization } from "@/components/TrackVisualization";
 import { AIRecommendationsPanel } from "@/components/AIRecommendationsPanel";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { railwayApi } from "@/services/railwayApi";
 import { useToast } from "@/hooks/use-toast";
@@ -22,41 +24,6 @@ import {
   Wifi,
   WifiOff
 } from "lucide-react";
-
-const mockTrains = [
-  {
-    trainNumber: "12345",
-    trainName: "Rajdhani Express",
-    currentLocation: "New Delhi",
-    nextStation: "Ghaziabad",
-    status: "operational" as const,
-    delay: 0,
-    priority: "express" as const,
-    eta: "14:30",
-    aiRecommendation: "Maintain current speed. Clear track ahead."
-  },
-  {
-    trainNumber: "67890",
-    trainName: "Freight Express",
-    currentLocation: "Meerut Junction",
-    nextStation: "Muzaffarnagar", 
-    status: "delayed" as const,
-    delay: 15,
-    priority: "freight" as const,
-    eta: "15:45",
-    aiRecommendation: "Reduce precedence to passenger train. Alternative: Platform 2."
-  },
-  {
-    trainNumber: "11223",
-    trainName: "Shatabdi Express",
-    currentLocation: "Saharanpur",
-    nextStation: "Dehradun",
-    status: "operational" as const,
-    delay: 0,
-    priority: "express" as const,
-    eta: "16:15"
-  }
-];
 
 const Index = () => {
   const [simulationRunning, setSimulationRunning] = useState(false);
@@ -148,6 +115,14 @@ const Index = () => {
                   Reconnect
                 </Button>
               )}
+              
+              {/* Theme Toggle */}
+              <div className="flex items-center gap-2">
+                <ThemeSwitch />
+                <div className="w-px h-6 bg-border mx-2" />
+                <ThemeToggle />
+              </div>
+              
               <Button variant="outline" size="icon">
                 <Settings className="w-4 h-4" />
               </Button>
@@ -246,7 +221,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-primary">Active Trains</h2>
             <Badge className="bg-muted/50 text-muted-foreground">
-              {Object.keys(trains).length > 0 ? Object.keys(trains).length : mockTrains.length} trains monitored
+              {Object.keys(trains).length} trains monitored
             </Badge>
           </div>
           
@@ -266,9 +241,19 @@ const Index = () => {
                 />
               ))
             ) : (
-              mockTrains.map((train) => (
-                <TrainCard key={train.trainNumber} {...train} />
-              ))
+              <div className="col-span-full text-center py-12">
+                <Train className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-muted-foreground mb-2">No Active Trains</h3>
+                <p className="text-sm text-muted-foreground">
+                  Connect to the railway system to monitor live train operations
+                </p>
+                {connectionStatus !== 'connected' && (
+                  <Button variant="outline" className="mt-4" onClick={reconnect}>
+                    <Wifi className="w-4 h-4 mr-2" />
+                    Connect to Railway System
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         </div>

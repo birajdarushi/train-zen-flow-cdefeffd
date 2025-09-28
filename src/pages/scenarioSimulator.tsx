@@ -358,41 +358,43 @@ export default function RailwayPlatformControl() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 p-6 border-b border-gray-700">
+      <div className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 px-6 py-4 border-b border-gray-700">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-4">
-            <Train className="text-blue-400" size={40} />
-            <div>
-              <h1 className="text-3xl font-bold text-white">Railway Section Control System</h1>
-              <p className="text-gray-300 text-lg">Manual Platform Assignment & Traffic Management</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Train className="text-blue-400" size={32} />
+              <div>
+                <h1 className="text-2xl font-bold text-white">Railway Section Control System</h1>
+                <p className="text-gray-300 text-sm">Manual Platform Assignment & Traffic Management</p>
+              </div>
             </div>
-          </div>
-          
-          {/* Key Metrics Dashboard */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-6">
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-cyan-400">{metrics.throughput}</div>
-              <div className="text-sm text-gray-300">Total Trains</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-green-400">{metrics.onTimeTrains}</div>
-              <div className="text-sm text-gray-300">On Time</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-yellow-400">{metrics.avgDelay}</div>
-              <div className="text-sm text-gray-300">Avg Delay (min)</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-red-400">{metrics.maxDelay}</div>
-              <div className="text-sm text-gray-300">Max Delay (min)</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-purple-400">{metrics.efficiency}%</div>
-              <div className="text-sm text-gray-300">Efficiency</div>
-            </div>
-            <div className="bg-black/40 rounded-lg p-4 text-center border border-gray-700">
-              <div className="text-2xl font-bold text-orange-400">{metrics.totalDelay}</div>
-              <div className="text-sm text-gray-300">Total Delay (min)</div>
+            
+            {/* Key Metrics Dashboard - Compact */}
+            <div className="flex gap-6">
+              <div className="text-center">
+                <div className="text-xl font-bold text-cyan-400">{metrics.throughput}</div>
+                <div className="text-xs text-gray-300">Total Trains</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-green-400">{metrics.onTimeTrains}</div>
+                <div className="text-xs text-gray-300">On Time</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-yellow-400">{metrics.avgDelay}</div>
+                <div className="text-xs text-gray-300">Avg Delay (min)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-red-400">{metrics.maxDelay}</div>
+                <div className="text-xs text-gray-300">Max Delay (min)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-purple-400">{metrics.efficiency}%</div>
+                <div className="text-xs text-gray-300">Efficiency</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-orange-400">{metrics.totalDelay}</div>
+                <div className="text-xs text-gray-300">Total Delay (min)</div>
+              </div>
             </div>
           </div>
         </div>

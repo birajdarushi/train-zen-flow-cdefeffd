@@ -11,6 +11,7 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { railwayApi } from "@/services/railwayApi";
 import { useToast } from "@/hooks/use-toast";
+import  AITrainScheduler from "@/components/AITrainScheduler";
 import { 
   Train, 
   Clock, 
@@ -162,6 +163,11 @@ const Index = () => {
             icon={AlertTriangle}
             description="active alerts"
           />
+        </div>
+
+        {/* AI Train Scheduler - Above Main Dashboard */}
+        <div className="w-full">
+          <AITrainScheduler />
         </div>
 
         {/* Main Dashboard */}

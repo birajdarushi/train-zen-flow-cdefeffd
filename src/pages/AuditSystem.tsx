@@ -469,33 +469,33 @@ export default function RailwayAuditSystem(): JSX.Element {
   return (
     <div className="min-h-screen bg-black p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="bg-gray-900 rounded-lg shadow-xl border border-gray-700 mb-6">
-          <div className="p-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Shield className="text-pink-200" size={32} />
-                <div>
-                  <h1 className="text-2xl font-bold">Railway Traffic Control Audit System</h1>
-                  <p className="text-indigo-100">Comprehensive Operations Monitoring & Compliance Tracking</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={generateAuditReport}
-                  disabled={isGeneratingReport}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  {isGeneratingReport ? (
-                    <RefreshCw className="animate-spin" size={16} />
-                  ) : (
-                    <Download size={16} />
-                  )}
-                  Generate Report
-                </button>
-              </div>
-            </div>
-          </div>
+       {/* Header */}
+<div className="bg-gray-900 rounded-lg shadow-xl border border-gray-700 mb-6">
+  <div className="px-4 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <Shield className="text-pink-200" size={24} />
+        <div>
+          <h1 className="text-lg font-bold leading-tight">Railway Traffic Control Audit System</h1>
+          <p className="text-xs text-indigo-100">Operations Monitoring & Compliance Tracking</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={generateAuditReport}
+          disabled={isGeneratingReport}
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm"
+        >
+          {isGeneratingReport ? (
+            <RefreshCw className="animate-spin" size={14} />
+          ) : (
+            <Download size={14} />
+          )}
+          Generate Report
+        </button>
+      </div>
+    </div>
+  </div>
           
           {/* Status Bar */}
           <div className="p-4 bg-gray-800 border-b border-gray-700">
@@ -1009,7 +1009,7 @@ export default function RailwayAuditSystem(): JSX.Element {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
               <strong className="text-purple-400">Audit System Status:</strong> Active monitoring with real-time event capture. 
-              All operations are being logged for compliance and analysis. Data retention: 7 years.
+              All operations are being logged for compliance and analysis.
             </p>
             <p className="text-xs text-gray-500 mt-2">
               System Version: 2.1.4 • Last Backup: {new Date().toLocaleDateString()} • 

@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { 
   Shield, FileText, Download, Search, Filter, Calendar, Clock, 
   User, AlertTriangle, CheckCircle, Eye, BarChart3, TrendingUp,
-  Database, Settings, RefreshCw, Archive, Bell
+  Database, Settings, RefreshCw, Archive, Bell, Home
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 // Remove XLSX import - we'll use a different approach
 
 /**
@@ -74,7 +75,9 @@ interface AuditReport {
 }
 
 export default function RailwayAuditSystem(): JSX.Element {
-  const [auditEvents, setAuditEvents] = useState<AuditEvent[]>([]);
+  const navigate = useNavigate();
+  
+  const [events, setEvents] = useState<AuditEvent[]>([]);
   const [complianceMetrics, setComplianceMetrics] = useState<ComplianceMetric[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<AuditEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null);
@@ -98,7 +101,7 @@ export default function RailwayAuditSystem(): JSX.Element {
     const sampleEvents = generateSampleAuditEvents();
     const sampleMetrics = generateSampleComplianceMetrics();
     
-    setAuditEvents(sampleEvents);
+    setEvents(sampleEvents);
     setComplianceMetrics(sampleMetrics);
     
     // Real-time updates disabled - events will remain static
@@ -115,7 +118,7 @@ export default function RailwayAuditSystem(): JSX.Element {
 
   // Filter events based on criteria
   useEffect(() => {
-    let filtered = [...auditEvents];
+    let filtered = [...events];
 
     // Search filter
     if (searchTerm) {
@@ -157,7 +160,7 @@ export default function RailwayAuditSystem(): JSX.Element {
 
     setFilteredEvents(filtered);
     setCurrentPage(1);
-  }, [auditEvents, searchTerm, selectedType, selectedSeverity, selectedUser, dateRange, showUnresolvedOnly]);
+  }, [events, searchTerm, selectedType, selectedSeverity, selectedUser, dateRange, showUnresolvedOnly]);
 
   function generateSampleAuditEvents(): AuditEvent[] {
     const events: AuditEvent[] = [];
@@ -481,6 +484,15 @@ export default function RailwayAuditSystem(): JSX.Element {
         </div>
       </div>
       <div className="flex items-center gap-3">
+        {/* Home Button */}
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+        >
+          <Home size={14} />
+          <span>Home</span>
+        </button>
+        
         <button
           onClick={generateAuditReport}
           disabled={isGeneratingReport}
@@ -501,24 +513,24 @@ export default function RailwayAuditSystem(): JSX.Element {
           <div className="p-4 bg-gray-800 border-b border-gray-700">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{auditEvents.length}</div>
+                <div className="text-2xl font-bold text-green-400">{events.length}</div>
                 <div className="text-xs text-gray-400">Total Events</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-400">
-                  {auditEvents.filter(e => e.severity === 'CRITICAL').length}
+                  {events.filter(e => e.severity === 'CRITICAL').length}
                 </div>
                 <div className="text-xs text-gray-400">Critical Events</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-yellow-400">
-                  {auditEvents.filter(e => !e.resolved && e.actionRequired).length}
+                  {events.filter(e => !e.resolved && e.actionRequired).length}
                 </div>
                 <div className="text-xs text-gray-400">Pending Actions</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-cyan-400">
-                  {((auditEvents.filter(e => e.complianceStatus === 'COMPLIANT').length / auditEvents.length) * 100).toFixed(1)}%
+                  {((events.filter(e => e.complianceStatus === 'COMPLIANT').length / events.length) * 100).toFixed(1)}%
                 </div>
                 <div className="text-xs text-gray-400">Compliance Rate</div>
               </div>
@@ -979,28 +991,28 @@ export default function RailwayAuditSystem(): JSX.Element {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-400">
-                {auditEvents.filter(e => e.type === 'AI_DECISION').length}
+                {events.filter(e => e.type === 'AI_DECISION').length}
               </div>
               <div className="text-sm text-gray-400">AI Decisions Today</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-green-400">
-                {auditEvents.filter(e => e.type === 'CONFLICT_RESOLVED').length}
+                {events.filter(e => e.type === 'CONFLICT_RESOLVED').length}
               </div>
               <div className="text-sm text-gray-400">Conflicts Resolved</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-400">
-                {auditEvents.filter(e => e.type === 'MANUAL_OVERRIDE').length}
+                {events.filter(e => e.type === 'MANUAL_OVERRIDE').length}
               </div>
               <div className="text-sm text-gray-400">Manual Overrides</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-400">
-                {auditEvents.filter(e => e.type === 'SAFETY_ALERT').length}
+                {events.filter(e => e.type === 'SAFETY_ALERT').length}
               </div>
               <div className="text-sm text-gray-400">Safety Alerts</div>
             </div>

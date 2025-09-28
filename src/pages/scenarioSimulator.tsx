@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { Train, Clock, BarChart3, Settings, MapPin, RefreshCw, AlertTriangle, TrendingUp, TrendingDown, Loader } from "lucide-react";
+import { Train, Clock, BarChart3, Settings, MapPin, RefreshCw, AlertTriangle, TrendingUp, TrendingDown, Loader, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type Train = {
   id: string;
@@ -22,6 +23,7 @@ type ScheduleEntry = {
 };
 
 export default function RailwayPlatformControl() {
+  const navigate = useNavigate();
   const [trains, setTrains] = useState<Train[]>([
     {
       id: "T001",
@@ -369,12 +371,22 @@ export default function RailwayPlatformControl() {
               </div>
             </div>
             
-            {/* Key Metrics Dashboard - Compact */}
-            <div className="flex gap-6">
-              <div className="text-center">
-                <div className="text-xl font-bold text-cyan-400">{metrics.throughput}</div>
-                <div className="text-xs text-gray-300">Total Trains</div>
-              </div>
+            <div className="flex items-center gap-4">
+              {/* Home Button */}
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+              >
+                <Home size={18} />
+                <span className="font-medium">Home</span>
+              </button>
+              
+              {/* Key Metrics Dashboard - Compact */}
+              <div className="flex gap-6">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-cyan-400">{metrics.throughput}</div>
+                  <div className="text-xs text-gray-300">Total Trains</div>
+                </div>
               <div className="text-center">
                 <div className="text-xl font-bold text-green-400">{metrics.onTimeTrains}</div>
                 <div className="text-xs text-gray-300">On Time</div>
@@ -394,6 +406,7 @@ export default function RailwayPlatformControl() {
               <div className="text-center">
                 <div className="text-xl font-bold text-orange-400">{metrics.totalDelay}</div>
                 <div className="text-xs text-gray-300">Total Delay (min)</div>
+              </div>
               </div>
             </div>
           </div>
